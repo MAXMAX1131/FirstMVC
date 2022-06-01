@@ -1,0 +1,59 @@
+﻿body {
+}
+
+.tuijian {
+display:block;
+}
+.dropdown {
+display:block;
+}
+.select {
+    float:left;
+}
+.forseach {
+background:white;
+}
+
+.imgShow {
+   display:block;
+    float:left;
+}
+.Thumbnail {
+     display:none;
+}
+.h1 {
+text-align:center
+}
+
+.hidden {
+display:none;
+}
+.edit:before {
+}
+.Vertical {
+  width: 1px;
+   height: 300px;
+   background:red;
+}
+.aa:hover{ background:red; }
+
+.top {
+margin:15px;
+}
+.miss {
+width:64px;
+height:42px;
+border-radius:35px;
+margin-left:10px;
+margin-right:2px;
+}
+.blank {
+margin-left:25px;
+}
+.form-group2 {
+margin-left:25px;
+
+}
+
+.tablein,tr{ height:50px;}
+

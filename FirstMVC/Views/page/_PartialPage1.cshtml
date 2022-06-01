@@ -1,0 +1,328 @@
+﻿@model FirstMVC.Models.SearchModel
+
+<table>
+<tr>
+<td style="background-color:#5F9EA0;height:80%;width:794px;text-align:center"  id="content"  >
+    <div>
+        @using (Html.BeginForm("LoginAccess", "Register", new { page = 1 }, FormMethod.Get, new { @class = "drop", id = "searchForm" }))
+        {   
+            
+            <input id="back" type="text" value="@ViewBag.BackUrl" style="display:none">@*
+           
+            
+              @Html.HiddenFor(__ => __. ,new { @Value=ViewBag.BackUrl} )
+
+         *@<div style="float:left">
+                @*<select id="season" name="season">
+                 <option value="">All Seasons</option>
+                 @foreach (Farm item in ViewBag.SeasonList as List<Farm>)
+                 {            
+                 <option value="@item.season" @(ViewBag.season == item.season? "selected='selected'":"")>@item.season</option>
+                 }
+                 </select> *@
+             
+             @Html.DropDownList("season", (SelectList)ViewBag.SeasonList,"All", new { })            
+        </div>       
+        <div class="insearch" style="float:left">
+
+          @* @Html.EditorFor(Farm => Farm.k, new { inquire = new { @class = "inquire", placeholder = "Please enter the keywords" } })*@      
+
+            <input type="text" id="k"  value="@ViewBag.q">
+             <a class="input-group-addon clickable" id="btnSearch"><i class="fa fa-search")  >查询推荐</i></a>  
+         </div>            
+            <div>
+                <a  class="forseach">推荐</a>
+                @*@Html.Hidden(mmand )*@  
+                <input type="text" id="recommand" value='1'  style="display:none" class='hidden'>
+            </div>
+        }
+    </div>
+        
+<table style="float:left"  >
+    <tr>
+        <th><input type="checkbox" id="selectAll1" style="display:none" /></th>
+        <th style="width:120px">名字</th>
+        <th style="width:120px">种类</th>
+        <th style="width:120px">属于</th>
+        <th style="width:120px">价格</th>
+        <th style="width:120px">季节</th>
+        <th style="width:120px"><input type="checkbox" id="selectAll" style="display:none" />推荐</th>
+        <th style="width:150px" class="text-center">编辑</th>
+    </tr>
+        @foreach (FirstMVC.Models.Farm f in ViewBag.ListFarm)
+        {               
+        <tr>
+        <td><input type="checkbox" style="margin-left:5px" name="check_item" value="" /></td>
+        <td style="width:120px"class="productName">@f.name</td>
+        <td style="width:120px">@f.category</td>     
+        <td style="width:120px">@f.belong</td>
+        <td style="width:120px">@f.pay</td>
+        <td style="width:120px">@f.season</td>                  
+        <td class="command" style="width:120px">
+            <i onclick='ChangeRecommend(@f.ID,this,"@f.name")' class="@(f.recommand ? "fa fa-check-square-o" : "fa fa-check-square-o")"></i>  
+            <input class="tuijian"  type="checkbox" style="margin-left:59px " name="check_item" value="@f.recommand"  />
+        </td>
+        <td class="handle_product" style="width:150px">
+            <button title="Edit" onclick="EditProduct(@f.ID)" data-toggle="modal" class="edit">1</button>
+            <i title="Dish Photos" id="morePics" onclick="SubmitPics(@f.ID)" class="photo">2</i>
+            <i title="Delete" onclick="DeleteProduct(@f.ID,this)" class="delete">3</i>
+            <i title="Reviews" class="rating">4</i>
+        </td>
+        </tr>
+            }  
+        
+    @{
+    ViewBag.Title = "Edit";
+    Layout = "";
+}
+@model product
+<head>
+    <title></title>
+
+</head>
+<div id="editlist">
+    @using (Html.BeginForm("Edit", "Register", FormMethod.Post, new { @class = "form-horizontal", id = "editProduct", enctype = "multipart/form-data" }))
+    {      
+        @Html.HiddenFor(model => model.ID) 
+         @Html.Hidden("ChangeThu", 0)  
+        <div> 
+        <div class="edit-left " style="float:left;margin-left:10%;width:30%">
+            <div>
+                 <input class="Thumbnail" id="Thumbnail" onchange="ChangeThumbnail(this)" accept="image/*" name="Thumbnail" type="file" style="display:none" />
+            </div>
+               <div style="width:100%;float:right"> <img class="imgShow"  src='@(!string.IsNullOrWhiteSpace(Model.thumbnail) ? Model.thumbnail : "Images/nopic.png")' width="200" height="200" /></div>
+               <div style="float:left; margin-left:20px"><h2 class="cc"><a onclick="document.getElementById('Thumbnail').click()" style="font-family:'Book Antiqua';font-size:smaller;color:gray;text-decoration : none" >Upload</a></h2></div>
+               <div style="float:left; margin-left:20px"><h2 class="cc1"><a class="removefile" style="@(!string.IsNullOrWhiteSpace(Model.thumbnail) ? "" : "");font-family:'Book Antiqua';font-size:smaller;color:gray;text-decoration : none ">Delete</a></h2></div>                    
+        </div>
+        <div class="form-group"  style="float:left;border-left:#ccc 2px dotted; width:60%">
+    @* <label style="margin:12px,50px,12px,12px; float:left;line-height:30px">名称</label>
+             <textarea class="form-control" style="width:400px;height:5px"  id="name">@Model.name</textarea>
+            <label style="margin:12px,50px,12px,12px; float:left" >描述</label>
+             <textarea class="form-control" style="width:400px;height:5px" id="description1">@Model.description1</textarea>*@
+            <div style="margin:30px 0px 0px 0px">
+            <label style="margin:25px 25px 0px 0px; float:left;line-height:0px">名称</label>
+            <input type="text" id="name"  value="@Model.name" class="blank form-control" style="width:400px;height:45px">
+            </div>
+            <div style="margin:30px 0px 0px 0px">
+            <label style="margin:25px 25px 0px 0px; float:left;line-height:0px" >描述</label>
+    @*    @Html.TextAreaFor(model => model.description1, new { @class = "form-control", style = "height: 10px;resize: none;" })*@
+            <input type="text" id="description1"  value="@Model.description1" class="blank form-control" style="width:400px;height:45px">
+            </div>
+            @*   <textarea class="form-control" style="width:400px;height:40px">@Html.EditorFor(model => model.name, new { })</textarea>
+            <textarea class="form-control" style="width:400px;height:40px">@Html.TextAreaFor(model => model.description1, new { @class = " ", placeholder = "Enter the description..."})</textarea>*@
+           <div style="display:block;width:100%;margin:30px 30px 20px 0px"> @Html.CheckBoxFor(model => model.isrecommand, new { @class = " " })<label >推荐</label></div>
+            @*<a href="@(Model.thumbnail)">
+                <img class="imgShow" src='@(!string.IsNullOrWhiteSpace(Model.thumbnail) ? Model.thumbnail : "Images/nopic.png")' style="width:50px;height:50px;padding:2px" />
+            </a>*@
+            <div style="float:left;margin:0px 30px 0px 80px;" >
+            <button type="submit" class="btn btn-primary" style="float:left; width: 200px" id="forSale">Save and Finish</button>
+            <span class="btn btn-default historyback  " data-backurl="@ViewBag.BackUrl" style="margin-left:20px;width:100px;float:left">Cancel</span>  
+            </div>
+       @* <p> <a href="#" class="aa">22</a></p>*@
+        </div>  
+      </div>   
+        
+        <div>
+            <div>
+
+            </div>
+            <div>
+
+            </div>
+        </div>               
+    }
+</div>
+
+<script type="text/javascript">
+@*    $(function () {
+        $("#editProduct").validate({
+            rules: {
+                UnitPrice: {
+                    required: true,
+                    decimal: [18, 2]
+                },
+                UnitTaxFee: {
+                    required: true,
+                    decimal: [18, 2]
+                }
+            },
+            submitHandler: function (form) {
+                $(form).ajaxSubmit(function (data) {
+                    alertify.success("Item Successfully Saved");
+                    if ('@Html.Raw(ViewBag.BackUrl)' != '') {
+                        $('#editlist').load('@Html.Raw(ViewBag.BackUrl)');
+                       } else {
+                        $('#editlist').load('@Html.Raw(ViewBag.BackUrl)');
+                       }
+                   });
+                   $('#productModal').modal('hide');
+                   return false;
+               },
+               messages: {
+                   UnitPrice: {
+                       decimal: "Please enter a valid decimal.(format:9.99)"
+                   },
+                   UnitTaxFee: {
+                       decimal: "Please enter a valid decimal.(format:9.99)"
+                   }
+               }
+           });
+
+    });*@
+    $("#forSale").click(function () {
+        event.preventDefault();
+        var id = $("#ID").val();
+        var iname = $("#name").val();
+        var idescription = $("#description1").val();
+        //debugger;
+        var iisrecommand = $("#isrecommand").val();
+        var file = $("#Thumbnail").val();
+
+        $.post('@Url.Action("Edit", "Register")', { ID: id, name: iname, description1: idescription, isrecommand: iisrecommand, file: file }, function () {
+            debugger;
+            alertify.success('提交成功');
+            if ('@Html.Raw(ViewBag.BackUrl)' != '') {
+                $('#editlist').load('@Html.Raw(ViewBag.BackUrl)');
+            } else {
+                $('#editlist').load('@Url.Action("Edit", "Product")');
+            }
+        });
+    });
+
+    //.把 event.preventDefault();屏蔽 把#forSale的提交换成button   不能为空 ，再提交即可
+
+    $('.removefile').click(function () {
+        $('#ChangeThu').val(1);
+        $('#Thumbnail').val('');
+        $('.imgShow').attr('src', '/images/nopic.png');
+        $('.removefile').hide();
+    });
+    function ChangeThumbnail(obj) {
+        $('#ChangeThu').val(1);
+        if ($(obj).val() == "") {
+            $('.removefile').hide();
+            $('.imgShow').attr('src', '/Images/nopic.png');
+        }
+        else {
+            $('.removefile').show();
+            handleFile(obj);
+        }
+    }
+    //$('.historyback').on('click', function () {
+    //    var backurl = $(this).data('backurl');
+    //    if (backurl == 'homeurl') {
+    //        location.reload();
+    //    } else {
+    //        $('#editlist').load(backurl);
+    //        $('.historyback').addClass('hidden');
+    //    }
+    //});
+
+    $('.historyback').on('click', function () {
+        var backurl = $(this).data('backurl');
+        $('#editlist').load(backurl);
+        //$('.historyback').addClass('hidden');          
+    });
+
+
+
+
+
+</script>
+
+
+</table>
+</td>
+</tr>
+</table>
+
+<script type="text/javascript">
+
+    function EditProduct(id) {
+        $('#overlayDiv').show();
+        var backurl = $("#BackUrl").val();
+        $.get('@Url.Action("Edit","Register")', { id: id, backUrl: backurl }, function (data) {
+          @*  //$.get('@Url.Action("Edit","Register")', { id: id, backUrl: '@Html.Raw(Model.BackUrl)' }, function (data) {*@
+            $('#content').html(data);
+            $('#overlayDiv').hide();
+        });
+    }
+
+    $('#k').focus(function () {
+        document.onkeydown = function (e) {
+            if (e.keyCode == 13) {
+                $('#btnSearch').click();
+            }
+        }
+    });
+
+    if ($('#k').val() != '') {
+        $('.productName').textSearch($('#k').val() );
+    }
+
+    //$('#btnSearch').click(function () {      
+    //    var q = $('#k').val();
+    //    $('#searchForm').ajaxSubmit(function (data) {
+    //        $('#content').html(data); 
+    //        $(".productName").textSearch(q);
+    //    });
+    //    return false;
+    //});
+    $('#btnSearch').click(function () {      
+        var q = $("#k").val();
+        $.post('@Url.Action("LoginAccess","Register")', {q:q}, function (data) {
+            $('#content').html(data);
+        })
+    })
+
+    $('#season').change(function () {
+        $('#searchForm').ajaxSubmit(function (data) {
+            $('#content').html(data);  
+        });
+        return false;
+    });
+
+    $(".forseach").click(function () {
+        var tuijian = $("#recommand").val();
+        $.post('@Url.Action("LoginAccess", "Register")', { recommand: tuijian }, function (data) {
+            if (tuijian) {
+            $('#content').html(data);
+            $("#recommand").attr('value', "");
+        }else{
+            $('#content').html(data);
+            $("#recommand").attr('value', '1');
+        }
+        });
+        })
+
+        function ChangeRecommend(id, obj, name) {
+        var isChecked = $(obj).next().attr('value');
+        $.post('@Url.Action("ChangeRecommend", "Register")', { id: id, isChecked: !isChecked }, function () {          
+            if (isChecked) {
+                $(obj).next().attr('value', "");
+                //$(obj).removeClass('Checkmark').addClass('empty');
+                alertify.success(name + ' 推荐已取消');
+            } else {
+                $(obj).next().attr('value', '1');
+                //$(obj).removeClass('empty').addClass('Checkmark');
+                alertify.success(name + ' 推荐成功');
+            }
+          // $(obj).next().attr('value', !isChecked);
+        });
+    }
+
+   
+    //$('.tuijian').change(function () {
+    //    $this = $(this);
+    //    if ($this.attr('checked'))
+    //        console.log('true')
+    //    else
+    //    {
+    //        console.log('false');
+    //    }
+    //})
+    //$('.tuijian').change(function () {
+    //    $(".tuijian").attr("checked", false);
+    //})
+</script>
+

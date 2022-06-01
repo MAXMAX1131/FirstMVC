@@ -1,0 +1,101 @@
+﻿@model Farm
+@{
+    Layout = "";
+}
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th class="pull-right"><a class="btn btn-primary btn-sm" data-target="#categoryModal" onclick='Edit()'>Add a Category</a></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (Farm f in ViewBag.ListCategory) { 
+    <tr>
+        <th>@f.category</th>
+        <th class="pull-right">
+            <span onclick='Edit("@f.ID","@f.category")' data-target="#categoryModal" class="clickable">
+                <i class="fa fa-edit"></i> Edit
+            </span>|
+            <span onclick="Delete(@f.ID,this)" class="clickable">
+                <i class="fa fa-trash-o"></i> Delete
+            </span>
+        </th>
+    </tr>
+    }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="4" style="padding-top:20px">
+                <span>Click and drag (<i class="fa fa-hand-o-right "></i>) to sort the categories.</span>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+<div class="modal fada" id="categoryModal" tabindex="-1" aria-labelledby="categoryLabel" aria-hidden="true" data-backdrop="false">
+    <div class="modal-dialog" style="width:500px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="categoryLabel"></h5>
+            </div>
+            @using (Html.BeginForm("Category", "Register", FormMethod.Post, new { @class = "form-horizontal", id = "editForm" }))
+            {
+                <div class="modal-body">
+                    @Html.HiddenFor(__ => __.ID)
+                    <div class="form-group">
+                        <label class="control-label col-lg-4">Category: </label>
+                        <div class="input-group col-lg-5">
+                            @Html.EditorFor(__ => __.category, new { htmlAttributes = new { @class = "form-control", placeholder = "", required = "required" } })
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="btnSubmit" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('#editForm').submit(function () {
+            $('#editForm').ajaxSubmit(function (data) {
+                $('#categoryModal').modal('hide');
+                $('#content').html(data);
+            });
+            return false;
+        });
+        Sortable.create(categoryList, {
+            handle: '.tr-category',
+            animation: 150,
+            revert: true,
+            cursor: 'move',
+            onUpdate: function () {
+                var new_order = [];
+                var $list = $("#categoryList");
+                $list.find('.category-id').each(function () {
+                    new_order.push($(this).text());
+                });
+                var cids = new_order.join(',');
+                $.post('@Url.Action("changeDisplayOrder", "Product")', { cids: cids }, function () {
+                    alertify.success('Category Sort Successfully Saved');
+                });
+            }
+        });
+    });
+
+    function Edit(ID, category) {
+        debugger;
+        $('#ID').val(ID);
+        $('#category').val(category);
+        if (ID == '' || ID == undefined) {
+            $('#categoryLabel').text('Add a Category');
+        } else {
+            $('#categoryLabel').text('Edit Category');
+        }
+        $('#categoryModal').modal('show');
+    }
+</script>

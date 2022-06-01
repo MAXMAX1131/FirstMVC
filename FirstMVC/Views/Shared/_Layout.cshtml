@@ -1,0 +1,122 @@
+﻿
+@{
+    ViewBag.Title = "LoginAccess";   
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/CSS/filter.css" rel="stylesheet" />
+    <link href="~/CSS/font-awesome.css" rel="stylesheet" />
+    <link href="~/CSS/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Scripts/alertify.core.css" rel="stylesheet" />
+    <link href="~/Scripts/alertify.default.css" rel="stylesheet" />
+    <link href="~/Scripts/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Scripts/bootstrap-wysihtml5/bootstrap3-wysihtml5.css" rel="stylesheet" />
+    <script src="~/Scripts/alertify.min.js"></script>
+</head>
+<body>
+ <table width="100%"  border="0" class="content" >
+<tr>
+<td colspan="2" style="background-color:#7FFFD4;">
+<h1 style="text-align:center"><a href=javascript:void(0)>小何农场</a></h1>
+</td>
+</tr>
+
+<tr style="vertical-align:top">
+<td style="background-color:#00FFFF;width:13%;height:794px;text-align:left;">
+    <img src="/Images/农场.bmp" height="200" width="300" />
+@*    <p style="text-align:center"><a>水果</a></p><br/>
+    <p style="text-align:center">蔬菜</p><br/>
+    <p style="text-align:center">鱼产品</p><br/>
+    <p><a onclick="Load('@Url.Action("TLoginAccess","Register")',this)"><i class="fa fa-circle-o"></i>All Items </a></p>
+    <p style="text-align:center">家禽牲畜</p><br/>*@
+    
+    <div>
+       <ul>
+           <li>
+               <a href="#collapseOrder">水果 </a>
+               <ul class="" id="">
+                   <li><a onclick="Load('@Url.Action("TLoginAccess","Register")',this)"><i class="fa fa-circle-o"></i>所有产品 <span class=" "></span></a></li>
+                   <li></li>
+                   <li></li>
+               </ul>
+           </li>
+           <li>
+               <a href="#collapseOrder">蔬菜 </a>
+               <ul class="" id="">                 
+                   <li><a onclick="Load('@Url.Action("Edit","Register")',this)"><i class="fa fa-circle-o"></i>添加菜品 <span class=" "></span></a></li>
+                   <li></li>
+                   <li></li>
+               </ul>
+           </li>
+           <li>
+               <a href="#collapseOrder">鱼产品 </a>
+               <ul class="" id="">
+                   <li><a onclick="Load('@Url.Action("Hours","Register")',this)"><i class="fa fa-circle-o"></i>评论 <span class=" "></span></a></li>
+                   <li></li>
+                   <li></li>
+               </ul>
+           </li>
+                      <li>
+               <a href="#collapseOrder">家禽牲畜 </a>
+               <ul class="" id="">
+                   <li><a onclick="Load('@Url.Action("Category","Register")',this)"><i class="fa fa-circle-o"></i>种类 <span class=" "></span></a></li>
+                   <li></li>
+                   <li></li>
+               </ul>
+           </li>
+       </ul>
+    </div>
+</td>
+<td class="content-wrapper" id="contentArea" style="background-color:#C2CFDB;width:87%">           
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <span id="pageHeader" style="font-size: 20px;">Dashboard</span>
+        <span id="description" style="font-size: 14px;"></span>
+    </section>
+    <!-- Main content -->
+    <section id="content" class="content">
+        @RenderBody()
+    </section>
+</td>
+</tr>
+
+</table>
+    @Scripts.Render("~/bundles/jquery")
+    @RenderSection("scripts", required: false)
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.form.js"></script>
+    <script src="~/Scripts/alertify.js"></script>
+    <script src="~/Scripts/alertify.min.js"></script>
+    <link href="~/Scripts/bootstrap.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <link href="~/Scripts/alertify.core.css" rel="stylesheet" />
+    <script src="~/Scripts/uploadPreview.min.js"></script>
+    <script src="~/Scripts/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+    <script>
+        function Load(url, obj) {
+            $.get(url, function (data) {
+                $('#content').html(data);
+            })          
+        }
+        
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

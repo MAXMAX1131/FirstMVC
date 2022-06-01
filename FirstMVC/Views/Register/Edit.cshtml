@@ -1,0 +1,148 @@
+﻿@{
+    ViewBag.Title = "Edit";
+    Layout = "";
+}
+@model product
+<head>
+    <title></title>
+
+</head>
+<div id="editlist">
+    @using (Html.BeginForm("Edit", "Register", FormMethod.Post, new { @class = "form-horizontal", id = "editProduct", enctype = "multipart/form-data" }))
+    {      
+        @Html.HiddenFor(model => model.ID) 
+         @Html.Hidden("ChangeThu", 0)  
+        <div> 
+        <div class="edit-left1 " style="float:left;margin-left:10%;width:30%">
+            <div>
+                 <input class="Thumbnail" id="Thumbnail" onchange="ChangeThumbnail(this)" accept="image/*" name="Thumbnail" type="file" style="display:none" />
+            </div>
+               <div style="width:100%;float:right"> <img class="imgShow"  src='@(!string.IsNullOrWhiteSpace(Model.thumbnail) ? Model.thumbnail : "Images/nopic.png")' width="200" height="200" /></div>
+               <div style="float:left; margin-left:20px"><h2 class="cc"><a onclick="document.getElementById('Thumbnail').click()" style="font-family:'Book Antiqua';font-size:smaller;color:gray;text-decoration : none" >Upload</a></h2></div>
+               <div style="float:left; margin-left:20px"><h2 class="cc1"><a class="removefile" style="@(!string.IsNullOrWhiteSpace(Model.thumbnail) ? "" : "");font-family:'Book Antiqua';font-size:smaller;color:gray;text-decoration : none ">Delete</a></h2></div>                    
+        </div>
+        <div class="form-group1"  style="float:left;border-left:green 2px solid; width:60%">
+            <div style="margin:30px 0px 0px 30px">
+            <label style="margin:25px 25px 0px 0px; float:left;line-height:0px">名称</label>
+            <input type="text" id="name"  value="@Model.name" class="blank form-control" style="width:400px;height:45px">
+            </div>
+            <div style="margin:30px 0px 0px 30px">
+            <label style="margin:25px 25px 0px 0px; float:left;line-height:0px" >描述</label> 
+            <input type="text" id="description1"  value="@Model.description1" class="blank form-control" style="width:400px;height:45px">
+            </div>
+           <div style="display:block;width:100%;margin:30px 30px 20px 30px"> @Html.CheckBoxFor(model => model.isrecommand, new { @class = " " })<label >推荐</label></div>
+            <div style="float:left;margin:0px 30px 0px 110px;" >
+            <button type="submit" class="btn btn-primary" style="float:left; width: 200px" id="forSale">Save and Finish</button>
+            <span class="btn btn-default historyback  " data-backurl="@ViewBag.BackUrl" style="margin-left:20px;width:100px;float:left">Cancel</span>  
+            </div>
+        </div>  
+      </div>   
+        
+       @*<div>
+            <div>
+
+            </div>
+            <div>
+
+            </div>
+        </div>*@               
+    }
+</div>
+
+<script type="text/javascript">
+    @*    $(function () {
+        $("#editProduct").validate({
+            rules: {
+                UnitPrice: {
+                    required: true,
+                    decimal: [18, 2]
+                },
+                UnitTaxFee: {
+                    required: true,
+                    decimal: [18, 2]
+                }
+            },
+            submitHandler: function (form) {
+                $(form).ajaxSubmit(function (data) {
+                    alertify.success("Item Successfully Saved");
+                    if ('@Html.Raw(ViewBag.BackUrl)' != '') {
+                        $('#editlist').load('@Html.Raw(ViewBag.BackUrl)');
+                       } else {
+                        $('#editlist').load('@Html.Raw(ViewBag.BackUrl)');
+                       }
+                   });
+                   $('#productModal').modal('hide');
+                   return false;
+               },
+               messages: {
+                   UnitPrice: {
+                       decimal: "Please enter a valid decimal.(format:9.99)"
+                   },
+                   UnitTaxFee: {
+                       decimal: "Please enter a valid decimal.(format:9.99)"
+                   }
+               }
+           });
+
+    });*@
+    $("#description1").wysihtml5();
+    $("#forSale").click(function () {
+        event.preventDefault();
+        var id = $("#ID").val();
+        var iname = $("#name").val();
+        var idescription = $("#description1").val();
+        //debugger;
+        var iisrecommand = $("#isrecommand").val();
+        var file = $("#Thumbnail").val();
+        
+        $.post('@Url.Action("Edit", "Register")', { ID: id, name: iname, description1: idescription, isrecommand: iisrecommand, file: file }, function () {           
+            debugger;
+            alertify.success('提交成功');
+            if ('@Html.Raw(ViewBag.BackUrl)' != '') {
+                $('#editlist').load('@Html.Raw(ViewBag.BackUrl)');
+                                } else {
+                                    $('#editlist').load('@Url.Action("Edit", "Product")');
+                                }
+        });
+        });
+
+    //.把 event.preventDefault();屏蔽 把#forSale的提交换成button   不能为空 ，再提交即可
+
+       $('.removefile').click(function () {
+           $('#ChangeThu').val(1);
+           $('#Thumbnail').val('');
+           $('.imgShow').attr('src', '/images/nopic.png');
+           $('.removefile').hide();
+       });
+       function ChangeThumbnail(obj) {
+           $('#ChangeThu').val(1);
+           if ($(obj).val() == "") {
+               $('.removefile').hide();
+               $('.imgShow').attr('src', '/Images/nopic.png');
+           }
+           else {
+               $('.removefile').show();
+               handleFile(obj);
+           }
+       }
+       //$('.historyback').on('click', function () {
+       //    var backurl = $(this).data('backurl');
+       //    if (backurl == 'homeurl') {
+       //        location.reload();
+       //    } else {
+       //        $('#editlist').load(backurl);
+       //        $('.historyback').addClass('hidden');
+       //    }
+    //});
+
+       $('.historyback').on('click', function () {
+           var backurl = $(this).data('backurl');           
+               $('#editlist').load(backurl);
+               //$('.historyback').addClass('hidden');          
+       });
+      
+
+
+
+
+</script>

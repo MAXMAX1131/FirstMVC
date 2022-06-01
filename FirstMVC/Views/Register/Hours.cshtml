@@ -1,0 +1,149 @@
+﻿@{
+    ViewBag.Title = "Hours";
+    Layout = "";
+}
+@{
+    var list = (List<Hours>)ViewBag.Hours;
+    var sunday = list.FirstOrDefault(__ => __.dayofweek == 0);
+    var monday = list.FirstOrDefault(__ => __.dayofweek == 1);
+    var tuesday = list.FirstOrDefault(__ => __.dayofweek == 2);
+    var wensday = list.FirstOrDefault(__ => __.dayofweek == 3);
+    var thursday = list.FirstOrDefault(__ => __.dayofweek == 4);
+    var friday = list.FirstOrDefault(__ => __.dayofweek == 5);
+    var saturday = list.FirstOrDefault(__ => __.dayofweek == 6);
+    List<KeyValuePair<int, string>> kys = new List<KeyValuePair<int, string>> {
+        new KeyValuePair<int, string>(0,"Sunday"),
+        new KeyValuePair<int, string>(1,"Monday"),
+        new KeyValuePair<int, string>(2,"Tuesday"),
+        new KeyValuePair<int, string>(3,"Wensday"),
+        new KeyValuePair<int, string>(4,"Thursday"),
+        new KeyValuePair<int, string>(5,"Friday"),
+        new KeyValuePair<int, string>(6,"Saturday")
+    };
+}
+
+ <div class="col-lg-12">
+                @using (Ajax.BeginForm("Hours", "Vendor", new { }, new AjaxOptions
+                {
+                    HttpMethod = "post",
+                    OnSuccess = "SuccessResult"
+                }, new { @class = "form-horizontal", id = "editForm" }))
+                {      <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="vertical-align:top;font-weight:bold"><b>Date</b></th>
+                            <th colspan="3" class="text-center" style="border-bottom: 2px solid #fff;">
+                                <b>Business Hours</b>
+                            </th>
+                            <th rowspan="2" style="vertical-align:top;font-weight:bold"><b>Delivery Hours</b></th>
+                        </tr>
+                        <tr>
+                            <th style="font-weight: normal;text-align:center;">Hours</th>
+                            <th style="font-weight: normal;text-align:center;">Start Time</th>
+                            <th style="font-weight: normal;text-align:center;">End Time</th>
+                        </tr>
+                    </thead>
+                     <tbody >
+                        @for (int day = 0; day < 7; day++)
+                        {
+                            var vendorHours = list.FirstOrDefault(__ => __.dayofweek == day);
+                            var state = 2;
+                            var selectlist = new List<SelectListItem>() { };
+                            if (vendorHours != null)
+                            {
+                                if (vendorHours.starttime == "0:00" && vendorHours.endtime == "0:00")
+                                {
+                                    state = 1;
+                                    selectlist = new List<SelectListItem>() {
+                                            new SelectListItem { Text = "24h", Value = "0" ,Selected=true},
+                                            new SelectListItem { Text = "Closed", Value = "1" },
+                                            new SelectListItem { Text = "Hours", Value = "2" }
+                                            };
+                                }
+                                else if (string.IsNullOrWhiteSpace(vendorHours.starttime)
+                                    && string.IsNullOrWhiteSpace(vendorHours.endtime))
+                                {
+                                    state = 0;
+                                    selectlist = new List<SelectListItem>() {
+                                            new SelectListItem { Text = "24h", Value = "0"},
+                                            new SelectListItem { Text = "Closed", Value = "1" ,Selected=true },
+                                            new SelectListItem { Text = "Hours", Value = "2" }
+                                            };
+                                }
+                                else
+                                {
+                                    state = 2;
+                                    selectlist = new List<SelectListItem>() {
+                                            new SelectListItem { Text = "24h", Value = "0" },
+                                            new SelectListItem { Text = "Closed", Value = "1" },
+                                            new SelectListItem { Text = "Hours", Value = "2",Selected=true }
+                                            };
+                                }
+                            }
+                            else
+                            {
+                                state = 0;
+                                selectlist = new List<SelectListItem>() {
+                                            new SelectListItem { Text = "24h", Value = "0"},
+                                            new SelectListItem { Text = "Closed", Value = "1" ,Selected=true },
+                                            new SelectListItem { Text = "Hours", Value = "2" }
+                                            };
+                            }
+                            <tr>
+                                <td class="col-lg-1">
+                                    <div>@(kys.FirstOrDefault(__ => __.Key == day).Value)</div>
+                                    @Html.Hidden("week", day)
+                                    @Html.Hidden("vh_" + day, vendorHours != null ? vendorHours.ID : 0)
+                                </td>
+                                <td class="col-lg-1">@Html.DropDownList("State_" + day, selectlist, new { @class = "form-control", onchange = "ChangeState(" + day + ")" })</td>
+                                <td class="col-lg-2">
+                                    <div class=" @(state==2?"": "hidden")" id="start_@day">
+                                        <input data-day="@day" data-time="start" id="StartTime_@day" name="StartTime_@day" value="@(vendorHours!=null? (vendorHours.starttime!=null?vendorHours.starttime:"0:00"):"0:00")" class="form-control form_date " @(state == 2 ? "required" : "") />
+                                        <span class=""><i class=""></i></span>
+                                    </div>
+                                </td>
+                                <td class="col-lg-2">
+                                    <div class=" @(state==2?"": "hidden")" id="end_@day">
+                                        <input data-day="@day" data-time="end" id="EndTime_@day" name="EndTime_@day" value="@(vendorHours!=null? (vendorHours.endtime != null?vendorHours.endtime : "0:00"):"0:00")" class="form-control form_date" @(state == 2 ? "required" : "") />
+                                        <span class=""><i class=""></i></span>
+                                    </div>
+                                </td>
+                                <td class="col-lg-2"  >
+                                    <div class="form-group padding-h">
+                                        <textarea data-day="@day" id="DeliveryHours_@day" name="DeliveryHours_@day" class="form-control" cols="1" style="width:100px ;height:100%" >@(vendorHours != null ? vendorHours.endtime : "")</textarea>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                       </table>
+                }
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('.form_date').timepicker({
+            showInputs: false,
+            defaultTime: false
+        });
+    });
+    debugger;
+    $('#btnSubmit').click(function () {
+        $('.submit-loading').show();
+    });
+    function SuccessResult(d) {
+        $('.submit-loading').hide();
+        $('#content').html(d);
+        alertify.success('Hours Successfully Saved');
+    }
+    function ChangeState(day) {
+        var state = $('#State_' + day).val();
+        if (state == 2) {
+            $('#start_' + day).removeClass('hidden').attr('required', true);
+            $('#end_' + day).removeClass('hidden').attr('required', true);
+        } else {
+            $('#start_' + day).addClass('hidden').attr('required', false);
+            $('#end_' + day).addClass('hidden').attr('required', false);
+
+        }
+    }
+</script>
