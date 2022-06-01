@@ -589,6 +589,10 @@ namespace FirstMVC.Controllers
             return Content("sdfsdf");
         }
 
+        public ActionResult TestResult(string name)
+        {
+            return Content(name+" ok");
+        }
 
         public ActionResult ChangeRecommend(bool isChecked,int? id=null )
         {
